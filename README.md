@@ -1,4 +1,4 @@
-# Report-Birthday-CLI
+# CLI-Birthday-Reminder
 
 - [概要](#概要)
 - [DBに保存する内容](#dbに保存する内容)
@@ -61,7 +61,7 @@ report-birthday update <username> <XX/XX>
 
 ユーザ名から保存されている誕生日を削除します。
 ```
-report-birthday delete <username>
+report-birthday remove <username>
 ```
 
 ## 使用技術

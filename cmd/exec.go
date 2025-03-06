@@ -1,45 +1,93 @@
 package cmd
 
 import (
+
+	"cli-birthday-reminder/model"
 	"fmt"
-	"os"
-	"os/exec"
+	"log"
+	"time"
 
 	"github.com/spf13/cobra"
+	"gorm.io/gorm"
 )
 
+// サブコマンドの変数群
 var execCmd = &cobra.Command{
 	Use:   "exec",
-	Short: "execute git merge recursively",
+	Short: "Check today's birthdays",
 	Run: func(cmd *cobra.Command, args []string) {
 		
 	},
 }
 
+var AddCmd = &cobra.Command{
+	Use:   "add [name] [date]",
+	Short: "Add a new birthday",
+	Run: func(cmd *cobra.Command, args []string) {
+		
+	},
+}
+
+var ListCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List all birthdays",
+	Run: func(cmd *cobra.Command, args []string) {
+
+	},
+}
+
+var RemoveCmd = &cobra.Command{
+	Use:  "remove [name]",
+	Short: "Remove a birthday",
+	Run: func(cmd *cobra.Command, args []string) {
+		
+	},
+}
+
+var UpdateCmd = &cobra.Command{
+	Use:  "update [name] [date]",
+	Short: "Update a birthday",
+	Run: func(cmd *cobra.Command, args []string) {
+		
+	},
+}
+
+// サブコマンドの初期化
 func init() {
 	rootCmd.AddCommand(execCmd)
 }
 
-func RunCommand(name string, args []string) error {
-	command := name
-	for _, a := range args {
-		command += " " + a
+// コマンドのメソッド群
+// 今日の誕生日をチェックする
+func CheckTodayBirthdays(db *gorm.DB) {
+	today := time.Now().Format("01-02")
+	var birthdays []model.Birthday
+
+	result := db.Where("strftime('%m-%d', birthday) = ?", today).Find(&birthdays)
+	if result.Error != nil {
+		log.Fatalln(result.Error)
 	}
-	fmt.Printf("Running... [%s]\n", command)
-	cmd := exec.Command(name, args...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+
+	fmt.Println("Today's birthdays:")
+	for _, b := range birthdays {
+		fmt.Println("🎂Happy Birthday to %s!\n", b.Name)
+	}
 }
 
-// func AddCommand(name string, args []string) error {
-// 	// AddCommand
-// }
+// 誕生日を追加する
+func AddCommand(username string, birthday string) error {
+	
+	return nil
+}
 
-// func UpdateCommand(name string, args []string) error {
-// 	// UpdateCommand
-// }
+func ListCommand() {
+	rootCmd.AddCommand(ListCmd)
+}
 
-// func DeleteCommand(name string, args []string) error {
-// 	// DeleteCommand
-// }
+func RemoveCommand() {
+	rootCmd.AddCommand(RemoveCmd)
+}
+
+func UpdateCommand() {
+	rootCmd.AddCommand(UpdateCmd)
+}

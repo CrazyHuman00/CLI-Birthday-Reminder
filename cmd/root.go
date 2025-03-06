@@ -8,8 +8,10 @@ import (
 )
 
 var rootCmd = &cobra.Command{
+	Use: "birthday",
+	Short: "Birthday reminder system",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Hello report-birthday!")
+		fmt.Println("Hello birthday-reminder!")
 	},
 }
 
