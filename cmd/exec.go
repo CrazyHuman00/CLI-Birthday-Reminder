@@ -40,15 +40,16 @@ var RemoveCmd = &cobra.Command{
 	Use:  "remove [name]",
 	Short: "Remove a birthday",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return RemoveCommand()
+		return RemoveCommand(args[0])
 	},
 }
 
 var UpdateCmd = &cobra.Command{
 	Use:  "update [name] [date]",
 	Short: "Update a birthday",
-	Run: func(cmd *cobra.Command, args []string) {
-		
+	Args:  cobra.ExactArgs(2),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return UpdateCommand(args[0], args[1])
 	},
 }
 
@@ -75,6 +76,15 @@ func AddCommand(username string, birthday string) error {
 		log.Fatalln(err)
 	}
 
+	// 既に誕生日が存在する場合
+	if err := dbConn.Where("name = ?", username).First(&model.UserBirthday{}).Error; err == nil {
+		fmt.Printf("Birthday already exists for %s\n", username)
+        return nil
+	} else if err.Error() != "record not found" {
+		return err
+	}
+
+	// 誕生日を追加
 	result := dbConn.Create(&model.UserBirthday{Name: username, Birthday: birthdayTime})
 	if result.Error != nil {
 		return result.Error
@@ -111,21 +121,36 @@ func ListCommand() error {
 
 
 // 誕生日を削除する
-func RemoveCommand() error {
+func RemoveCommand(username string) error {
 	// DBに接続
 	dbConn := db.ConnectDB()
 	defer db.CloseDB(dbConn)
 	dbConn.AutoMigrate(&model.UserBirthday{})
 
+	result := dbConn.Where("name = ?", username).Delete(&model.UserBirthday{})
+	if result.Error != nil {
+		return result.Error
+	}
+	fmt.Printf("Birthday removed successfully! %s's birthday has been removed\n", username)
 	return nil
 }
 
 // 誕生日を更新する
-func UpdateCommand() error {
+func UpdateCommand(username string, birthday string) error {
 	// DBに接続
 	dbConn := db.ConnectDB()
 	defer db.CloseDB(dbConn)
 	dbConn.AutoMigrate(&model.UserBirthday{})
 
+	birthdayTime, err := time.Parse("01/02", birthday)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	result := dbConn.Model(&model.UserBirthday{}).Where("name = ?", username).Update("birthday", birthdayTime)
+	if result.Error != nil {
+		return result.Error
+	}
+	fmt.Printf("Birthday updated successfully! %s's birthday is now on %s\n", username, birthday)
 	return nil
 }
