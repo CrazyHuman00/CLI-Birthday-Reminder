@@ -1,7 +1,6 @@
 package db
 
 import (
-	"fmt"
 	"log"
 
 	"gorm.io/driver/sqlite"
@@ -10,8 +9,7 @@ import (
 
 // DBに接続する
 func ConnectDB() *gorm.DB{
-	url := fmt.Sprintf("sqlite3://%s/%s", "db", "test.db")
-	db, err := gorm.Open(sqlite.Open(url), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
 	if err != nil {
         log.Fatalln(err)
     }

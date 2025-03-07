@@ -8,10 +8,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"gorm.io/gorm"
 )
-
-var dbConn *gorm.DB
 
 /** サブコマンドの変数群 **/
 var execCmd = &cobra.Command{
@@ -26,7 +23,7 @@ var AddCmd = &cobra.Command{
 	Use:   "add [name] [date]",
 	Short: "Add a new birthday",
 	Args:  cobra.ExactArgs(2),
-	RunE: func(cmd *cobra.Command, args []string) error{
+	RunE: func(cmd *cobra.Command, args []string) error {
 		return AddCommand(args[0], args[1])
 	},
 }
@@ -34,16 +31,16 @@ var AddCmd = &cobra.Command{
 var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all birthdays",
-	Run: func(cmd *cobra.Command, args []string) {
-
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return ListCommand()
 	},
 }
 
 var RemoveCmd = &cobra.Command{
 	Use:  "remove [name]",
 	Short: "Remove a birthday",
-	Run: func(cmd *cobra.Command, args []string) {
-		
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return RemoveCommand()
 	},
 }
 
@@ -56,36 +53,23 @@ var UpdateCmd = &cobra.Command{
 }
 
 func init() {
-	dbConn := db.ConnectDB()
-	defer fmt.Println("Successfully Migrated")
-	defer db.CloseDB(dbConn)
-	dbConn.AutoMigrate(&model.UserBirthday{})
-
 	rootCmd.AddCommand(execCmd)
 	rootCmd.AddCommand(AddCmd)
+	rootCmd.AddCommand(ListCmd)
 	rootCmd.AddCommand(ListCmd)
 	rootCmd.AddCommand(RemoveCmd)
 	rootCmd.AddCommand(UpdateCmd)
 }
 
 /** コマンドのメソッド群 **/
-func CheckTodayBirthdays(db *gorm.DB) {
-	today := time.Now().Format("01-02")
-	var birthdays []model.UserBirthday
-
-	result := db.Where("strftime('%m-%d', birthday) = ?", today).Find(&birthdays)
-	if result.Error != nil {
-		log.Fatalln(result.Error)
-	}
-
-	fmt.Printf("Today's birthdays:\n")
-	for _, b := range birthdays {
-		fmt.Printf("🎂Happy Birthday to %s!\n", b.Name)
-	}
-}
 
 // 誕生日を追加する
 func AddCommand(username string, birthday string) error {
+	// DBに接続
+	dbConn := db.ConnectDB()
+	defer db.CloseDB(dbConn)
+	dbConn.AutoMigrate(&model.UserBirthday{})
+
 	birthdayTime, err := time.Parse("01/02", birthday)
 	if err != nil {
 		log.Fatalln(err)
@@ -100,16 +84,48 @@ func AddCommand(username string, birthday string) error {
 }
 
 // 誕生日をリストする
-func ListCommand() {
-	rootCmd.AddCommand(ListCmd)
+func ListCommand() error {
+	// DBに接続
+	dbConn := db.ConnectDB()
+	defer db.CloseDB(dbConn)
+	dbConn.AutoMigrate(&model.UserBirthday{})
+
+	var users []model.UserBirthday
+	result := dbConn.Find(&users)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	// 誕生日が見つからない場合
+	if len(users) == 0 {
+		fmt.Println("No birthdays found")
+		return nil
+	}
+
+	// 誕生日が見つかった場合
+	for _, user := range users {
+		fmt.Printf("%s's birthday is on %s\n", user.Name, user.Birthday.Format("01/02"))
+	}
+	return nil
 }
 
+
 // 誕生日を削除する
-func RemoveCommand() {
-	rootCmd.AddCommand(RemoveCmd)
+func RemoveCommand() error {
+	// DBに接続
+	dbConn := db.ConnectDB()
+	defer db.CloseDB(dbConn)
+	dbConn.AutoMigrate(&model.UserBirthday{})
+
+	return nil
 }
 
 // 誕生日を更新する
-func UpdateCommand() {
-	rootCmd.AddCommand(UpdateCmd)
+func UpdateCommand() error {
+	// DBに接続
+	dbConn := db.ConnectDB()
+	defer db.CloseDB(dbConn)
+	dbConn.AutoMigrate(&model.UserBirthday{})
+
+	return nil
 }
