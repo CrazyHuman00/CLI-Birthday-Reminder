@@ -2,8 +2,8 @@ package model
 
 import "time"
 
-type Birthday struct {
+type UserBirthday struct {
 	ID   uint       `gorm:"primary_key"`
-	Name string     `gorm:"uniqueIndex"`
-	Date time.Time
+	Name string     `gorm:"not null"`
+	Birthday time.Time
 }

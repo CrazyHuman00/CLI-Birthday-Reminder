@@ -1,4 +1,4 @@
-module cli-birthday-reminder
+module birthday-reminder
 
 go 1.24.0
 

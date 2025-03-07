@@ -10,7 +10,7 @@ import (
 
 // DBに接続する
 func ConnectDB() *gorm.DB{
-	url := fmt.Sprintf("sqlite3://%s", "test.db")
+	url := fmt.Sprintf("sqlite3://%s/%s", "db", "test.db")
 	db, err := gorm.Open(sqlite.Open(url), &gorm.Config{})
 	if err != nil {
         log.Fatalln(err)

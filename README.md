@@ -21,7 +21,7 @@ CLI上でもDBに保存されている誕生日を追加、更新、削除する
 
 ## DBに保存する内容
 
-- birthdays
+- UserBirthday
     - id(PK): int
     - name: string
     - day: string
@@ -32,14 +32,14 @@ CLI上でもDBに保存されている誕生日を追加、更新、削除する
 
 コマンドのバージョンを確認します。
 ```
-report-birthday version
+birthday-reminder version
 ```
 
 ### 誕生日リストの確認
 
 保存されている誕生日のリストを表示します。
 ```
-report-birthday list
+birthday-reminder list
 ```
 
 
@@ -47,21 +47,21 @@ report-birthday list
 
 誕生日をユーザ名と日付とセットで保存します。
 ```
-report-birthday add <username> <XX/XX>
+birthday-reminder add <username> <XX/XX>
 ```
 
 ### 誕生日の更新
 
 ユーザ名から保存されている誕生日を更新します。
 ```
-report-birthday update <username> <XX/XX>
+birthday-reminder update <username> <XX/XX>
 ```
 
 ### 誕生日の削除
 
 ユーザ名から保存されている誕生日を削除します。
 ```
-report-birthday remove <username>
+birthday-reminder remove <username>
 ```
 
 ## 使用技術
