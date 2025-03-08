@@ -1,7 +1,7 @@
 package main
 
 import (
-	"birthday-reminder/cmd"
+	"birthday/cmd"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-module birthday-reminder
+module birthday
 
 go 1.24.0
 

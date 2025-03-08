@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"birthday-reminder/db"
-	"birthday-reminder/model"
+	"birthday/db"
+	"birthday/model"
 	"fmt"
 	"log"
 	"time"
@@ -11,14 +11,6 @@ import (
 )
 
 /** サブコマンドの変数群 **/
-var execCmd = &cobra.Command{
-	Use:   "exec",
-	Short: "Check today's birthdays",
-	Run: func(cmd *cobra.Command, args []string) {
-		
-	},
-}
-
 var AddCmd = &cobra.Command{
 	Use:   "add [name] [date]",
 	Short: "Add a new birthday",
@@ -54,7 +46,6 @@ var UpdateCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(execCmd)
 	rootCmd.AddCommand(AddCmd)
 	rootCmd.AddCommand(ListCmd)
 	rootCmd.AddCommand(ListCmd)
@@ -76,19 +67,12 @@ func AddCommand(username string, birthday string) error {
 		log.Fatalln(err)
 	}
 
-	// 既に誕生日が存在する場合
-	if err := dbConn.Where("name = ?", username).First(&model.UserBirthday{}).Error; err == nil {
-		fmt.Printf("Birthday already exists for %s\n", username)
-        return nil
-	} else if err.Error() != "record not found" {
-		return err
-	}
-
 	// 誕生日を追加
 	result := dbConn.Create(&model.UserBirthday{Name: username, Birthday: birthdayTime})
 	if result.Error != nil {
 		return result.Error
 	}
+
 	fmt.Printf("Birthday added successfully! %s's birthday is on %s\n", username, birthday)
 	return nil
 }
@@ -101,7 +85,7 @@ func ListCommand() error {
 	dbConn.AutoMigrate(&model.UserBirthday{})
 
 	var users []model.UserBirthday
-	result := dbConn.Find(&users)
+	result := dbConn.Order("birthday ASC").Find(&users)
 	if result.Error != nil {
 		return result.Error
 	}
@@ -114,7 +98,7 @@ func ListCommand() error {
 
 	// 誕生日が見つかった場合
 	for _, user := range users {
-		fmt.Printf("%s's birthday is on %s\n", user.Name, user.Birthday.Format("01/02"))
+		fmt.Printf("%12s %s\n", user.Name, user.Birthday.Format("01/02"))
 	}
 	return nil
 }
@@ -131,6 +115,12 @@ func RemoveCommand(username string) error {
 	if result.Error != nil {
 		return result.Error
 	}
+
+	if result.RowsAffected == 0 {
+		fmt.Printf("Birthday not found for %s\n", username)
+		return nil
+	}
+
 	fmt.Printf("Birthday removed successfully! %s's birthday has been removed\n", username)
 	return nil
 }
