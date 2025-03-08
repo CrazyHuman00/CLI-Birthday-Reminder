@@ -69,6 +69,11 @@ birthday remove <username>
 - Go
 - github.com/spf13/cobra
 
+## 今後の方針
+
+- todayを引数として、今日の日付を取得できるようにする。
+
+
 ## 参考文献
 
 ---
