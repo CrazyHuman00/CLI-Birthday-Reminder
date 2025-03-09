@@ -1,4 +1,4 @@
-module birthday
+module github.com/CrazyHuman00/CLI-Birthday-Reminder
 
 go 1.24.0
 

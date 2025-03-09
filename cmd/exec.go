@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"birthday/db"
-	"birthday/model"
+	"github.com/CrazyHuman00/CLI-Birthday-Reminder/db"
+	"github.com/CrazyHuman00/CLI-Birthday-Reminder/model"
 	"fmt"
 	"log"
 	"time"

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"birthday/cmd"
+	"github.com/CrazyHuman00/CLI-Birthday-Reminder/cmd"
 )
 
 func main() {
