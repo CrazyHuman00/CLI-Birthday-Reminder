@@ -24,7 +24,6 @@ func init() {
 // 今日の誕生日を表示する
 func TodayCommand() error{
 	// DBに接続
-	fmt.Println("Connecting to the database...")
 	dbConn := db.ConnectDB()
 	defer db.CloseDB(dbConn)
 	dbConn.AutoMigrate(&model.UserBirthday{})
@@ -32,7 +31,6 @@ func TodayCommand() error{
 	var users []model.UserBirthday
 	today := time.Now().Format("01/02")
 
-	fmt.Println("Executing query...")
 	result := dbConn.Where("strftime('%m/%d', birthday) = ?", today).Find(&users)
 	if result.Error != nil {
 		return result.Error
