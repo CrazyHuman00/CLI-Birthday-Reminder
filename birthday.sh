@@ -7,4 +7,4 @@ cd $HOME/bin-birthday
 go build -o birthday
 
 # run birthday today command.
-./birthday today
+./birthday $@

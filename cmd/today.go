@@ -17,8 +17,17 @@ var todayCmd = &cobra.Command{
 	},
 }
 
+var startAndEndDaysCmd = &cobra.Command{
+	Use:   "period",
+	Short: "Print birthdays in the next 10 days",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return StartAndEndDaysCommand()
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(todayCmd)
+	rootCmd.AddCommand(startAndEndDaysCmd)
 }
 
 // 今日の誕生日を表示する
@@ -35,7 +44,6 @@ func TodayCommand() error{
 	if result.Error != nil {
 		return result.Error
 	}
-	fmt.Println(result.RowsAffected)
 
 	if len(users) == 0 {
 		fmt.Println("No birthdays today!")
@@ -46,5 +54,33 @@ func TodayCommand() error{
 	for _, user := range users {
 		fmt.Printf("%12s %s\n", user.Name, user.Birthday.Format("01/02"))
 	}
+	return nil
+}
+
+func StartAndEndDaysCommand() error {
+	// DBに接続
+	dbConn := db.ConnectDB()
+	defer db.CloseDB(dbConn)
+	dbConn.AutoMigrate(&model.UserBirthday{})
+
+	var users []model.UserBirthday
+	period := 10
+	startDate := time.Now().AddDate(0, 0, -period).Format("01/02")
+	endDate := time.Now().AddDate(0, 0, period).Format("01/02")
+
+	result := dbConn.Where("strftime('%m/%d', birthday) BETWEEN ? AND ?", startDate, endDate).Find(&users)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if len(users) == 0 {
+        fmt.Println("No birthdays in the next 10 days!")
+        return nil
+    }
+
+	fmt.Println("Upcoming birthdays:")
+    for _, user := range users {
+        fmt.Printf("%12s %s\n", user.Name, user.Birthday.Format("01/02"))
+    }
 	return nil
 }
