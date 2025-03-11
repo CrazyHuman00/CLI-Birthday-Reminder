@@ -2,7 +2,7 @@
 
 ---
 
-友達や身内の誕生日を管理する`birthday`コマンドです。[English version]()
+友達や身内の誕生日を管理する`birthday`コマンドです。[This page is English version](#cli-birthday-reminder-1)
 
 - [概要](#概要)
 - [DBに保存する内容](#dbに保存する内容)
@@ -13,6 +13,8 @@
     - [誕生日の更新](#誕生日の更新)
     - [誕生日の削除](#誕生日の削除)
 - [使用技術](#使用技術)
+- [今後の方針](#今後の方針)
+- [参考文献](#参考文献)
 
 ---
 
@@ -68,13 +70,81 @@ birthday remove <username>
 ## 使用技術
 
 - Go
-- github.com/spf13/cobra
+- [github.com/spf13/cobra](https://github.com/spf13/cobra)
 
 ## 今後の方針
 
-- todayを引数として、今日の日付を取得できるようにする。
-
+- 人によって色をつけれるようにする。
 
 ## 参考文献
 
+[GoでCLIコマンドを自作して公開するまでの道のり](https://zenn.dev/tttol/articles/c7dfc74d27e45d)
+
 ---
+
+# CLI-Birthday-Reminder
+
+The `birthday` command manages birthdays of friends and relatives.
+
+- [Summary](#summary)
+- [Contents to be saved to DB](#contents-to-be-saved-to-db)
+- [Feature](#feature)
+    - [version](#version)
+    - [list](#list)
+    - [add](#add)
+    - [update](#update)
+    - [remove](#remove)
+- [Stack](#stack)
+
+## Summary
+
+This command displays who's birthday is coming up when you start the CLI tool. you can also add, update, or delete birthdays stored in the DB on the CLI. The function reports from 10 days before the birthday and up to 10 days after the birthday.
+
+## Contents to be saved to DB
+
+- UserBirthday
+    - id(PK): int
+    - name: string
+    - day: string
+
+## Feature
+
+### version
+
+Check the version of the command.
+```
+birthday version
+```
+
+### list
+
+Displays a list of stored birthdays.
+```
+birthday list
+```
+
+### add
+
+Save the birthday as a set with the user name and date.
+```
+birthday add <username> <XX/XX>
+```
+
+### update
+
+Updates the stored birthdays from the user name.
+```
+birthday update <username> <XX/XX>
+```
+
+### remove
+
+Delete stored birthdays from the user name.
+```
+birthday remove <username>
+```
+
+## Stack
+
+- Golang
+- [github.com/spf13/cobra](https://github.com/spf13/cobra)
