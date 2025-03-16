@@ -17,17 +17,17 @@ var todayCmd = &cobra.Command{
 	},
 }
 
-var startAndEndDaysCmd = &cobra.Command{
-	Use:   "period",
-	Short: "Print birthdays in the next 10 days",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return StartAndEndDaysCommand()
-	},
+var periodCmd = &cobra.Command{
+    Use:   "period",
+    Short: "Print birthdays in the next 10 days",
+    RunE: func(cmd *cobra.Command, args []string) error {
+        return PeriodCommand()
+    },
 }
 
 func init() {
 	rootCmd.AddCommand(todayCmd)
-	rootCmd.AddCommand(startAndEndDaysCmd)
+	rootCmd.AddCommand(periodCmd)
 }
 
 // 今日の誕生日を表示する
@@ -57,7 +57,7 @@ func TodayCommand() error{
 	return nil
 }
 
-func StartAndEndDaysCommand() error {
+func PeriodCommand() error {
 	// DBに接続
 	dbConn := db.ConnectDB()
 	defer db.CloseDB(dbConn)
